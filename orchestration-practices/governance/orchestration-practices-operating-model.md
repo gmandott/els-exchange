@@ -176,6 +176,17 @@ I progetti operativi, come `els-platform`, restano:
 
 I contenuti presenti in `els-exchange/orchestration-practices/` sono duplicati pubblici sanificati e generalizzati. Non devono essere modificati come se fossero la fonte primaria di una pratica ancora mantenuta nel progetto originario.
 
+### Ciclo di vita dei contenuti in els-exchange
+
+Non tutti i contenuti di `els-exchange` hanno la stessa durata:
+
+* **`orchestration-practices-operating-model.md`** e gli altri documenti di governance in `governance/` sono contenuti permanenti: definiscono il progetto stesso e restano nel repository, non vengono mai cancellati periodicamente.
+* **`candidates/`** è uno spazio di transito: contiene schede pratica in attesa di revisione. Una volta che una scheda riceve un esito (approvata → `approved/` → `published/`, oppure rifiutata), la sua presenza in `candidates/` non ha più motivo di persistere e può essere rimossa secondo la cadenza di pulizia definita da Gianluca.
+* **`published/`** contiene le pratiche pubblicate: è l'obiettivo del progetto, non un passaggio temporaneo. Non viene cancellato — è la knowledge base trasferibile che il progetto costruisce nel tempo.
+* Materiale di scambio tecnico non editoriale (es. duplicati sanificati di file `els-platform` per validazione esterna one-off, non collegati a una scheda pratica) è per natura temporaneo: va rimosso dopo che la validazione richiesta è stata completata, con cadenza da definire in base all'uso reale osservato nelle prime settimane.
+
+La cadenza esatta di pulizia per i contenuti di transito non è fissata ora: verrà decisa dopo aver osservato il volume reale generato nel primo periodo di attività, coerente con il principio di non anticipare strutture non ancora giustificate dall'esperienza.
+
 **Le schede pratica depositate in `els-exchange/orchestration-practices/candidates/` devono essere già sanificate e verificate da Codex prima del deposito.** Il repository è pubblico: chiunque può clonarlo in qualsiasi momento, indipendentemente dalla sottocartella. Il deposito in `candidates/` non è un mezzo per far leggere bozze non ancora pulite a Claude — presuppone che la sanificazione sia già stata completata a monte.
 
 HITF resta un progetto distinto:
