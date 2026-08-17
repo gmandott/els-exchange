@@ -1,0 +1,171 @@
+# Public sanitized duplicate for external validation.
+# Source of truth: private els-platform:.orchestrator/policies.yaml
+# Do not edit this duplicate; apply corrections in els-platform and recopy if needed.
+
+# Policy operative v0.1.
+# Questo file non abilita automazioni: descrive vincoli da applicare manualmente o da futuri strumenti.
+version: "0.1"
+source_of_truth:
+  governance: "docs/00-project/ai-development-operating-model.md"
+  repository_rules: "AGENTS.md"
+
+main_protection:
+  direct_push_to_main: "forbidden_for_all_agents"
+  merge_by_agents: "forbidden"
+  merge_by_orchestrator: "forbidden"
+  merge_by_human: "required"
+  automatic_merge: "disabled"
+  force_push: "forbidden"
+  branch_deletion_of_protected_branch: "forbidden"
+
+task_branching:
+  dedicated_branch_required: true
+  branch_reuse_across_tasks: "forbidden"
+  branch_start_point: "updated_main_unless_issue_says_otherwise"
+  clean_working_tree_before_start: true
+  baseline_commit_must_be_recorded: true
+
+scope_control:
+  issue_readiness_required: true
+  baseline_check_required: true
+  allowed_paths_must_match_issue: true
+  out_of_scope_paths_must_not_be_modified: true
+  scope_expansion_requires_human_approval: true
+  missing_or_ambiguous_requirements_stop_task: true
+
+security:
+  production_secrets_access: "forbidden"
+  secret_printing: "forbidden"
+  secret_commit: "forbidden"
+  env_file_modification: "forbidden_in_pilot"
+  personal_data_commit: "forbidden"
+  order_or_customer_data_commit: "forbidden"
+  credential_files_commit: "forbidden"
+
+access_matrix:
+  visible_environment_variables:
+    allowed:
+      - name: "CI"
+        scope: "non_secret_runtime_flag"
+        reason: "Flag tecnico non sensibile usato da molti tool."
+      - name: "NODE_ENV"
+        scope: "non_secret_runtime_mode"
+        reason: "Modalita runtime non segreta, se gia presente nell'ambiente."
+    forbidden:
+      - "production_secrets"
+      - "api_keys"
+      - "tokens"
+      - "database_urls_with_credentials"
+      - "payment_provider_credentials"
+      - "customer_or_order_data"
+    note: "In v0.1 nessuna variabile di produzione e necessaria agli agenti."
+  allowed_commands:
+    read_only:
+      - "git status"
+      - "git diff"
+      - "git log"
+      - "git show"
+      - "git branch"
+      - "rg"
+      - "find"
+      - "sed"
+      - "cat"
+    validation:
+      - "git diff --check"
+      - "test"
+      - "ruby -e 'require \"yaml\"'"
+    git_task_branch:
+      - "git checkout"
+      - "git checkout -b"
+      - "git fetch"
+      - "git pull --ff-only"
+      - "git add"
+      - "git commit"
+      - "git push"
+  forbidden_commands:
+    - "git push origin main"
+    - "git merge"
+    - "git reset --hard"
+    - "git push --force"
+    - "npm install"
+    - "npm audit fix"
+    - "npm publish"
+    - "deploy_commands"
+    - "commands_that_print_secrets"
+  writable_paths:
+    precedence:
+      - "permanently_read_only_paths"
+      - "allowed_by_issue_scope"
+      - "default_read_only_paths"
+      - "unclassified_paths"
+    allowed_by_issue_scope:
+      patterns:
+        - ".orchestrator/**"
+        - ".github/ISSUE_TEMPLATE/**"
+        - ".github/pull_request_template.md"
+      rule: "Scrittura consentita soltanto quando il percorso e incluso esplicitamente nello scope della issue."
+  permanently_read_only_paths:
+    patterns:
+      - ".env"
+      - ".env.*"
+      - "**/*secret*"
+      - "**/*credential*"
+      - "**/*private-key*"
+    rule: "Scrittura sempre vietata nel workflow pilota; issue, scope generico o approvazione puntuale non possono superare questa categoria."
+  default_read_only_paths:
+    patterns:
+      - "AGENTS.md"
+      - "README.md"
+      - "docs/**"
+      - ".github/workflows/**"
+      - "apps/**"
+      - "packages/**"
+      - "infrastructure/**"
+    rule: "Scrittura vietata per default, autorizzabile solo da issue specifica o approvazione umana esplicita."
+  unclassified_paths:
+    default_policy: "deny_write"
+    treatment: "default_read_only"
+    requirement: "Richiede classificazione o autorizzazione umana esplicita prima di qualunque modifica."
+  read_only_paths:
+    permanently_read_only_paths_ref: "access_matrix.permanently_read_only_paths"
+    default_read_only_paths_ref: "access_matrix.default_read_only_paths"
+  note: "La matrice e dichiarativa: non concede permessi tecnici e non sostituisce sandbox, branch protection o approvazione umana."
+
+delivery_limits:
+  deploy: "forbidden"
+  infrastructure_changes: "forbidden_unless_explicitly_approved"
+  github_actions_changes: "forbidden_unless_explicitly_approved"
+  package_installation: "forbidden_unless_explicitly_approved"
+  dependency_updates: "forbidden_unless_explicitly_approved"
+  external_api_calls: "forbidden_in_v0_1"
+  repository_creation: "forbidden"
+
+review_and_quality:
+  independent_review_required: true
+  reviewer_role: "claude"
+  human_approval_required_before_merge: true
+  tests_lint_build_required_when_available: true
+  diff_check_required: true
+  secrets_check_required: true
+  yaml_validation_required_for_orchestrator_files: true
+
+iteration_limits:
+  max_automatic_fix_cycles: 2
+  max_reviewer_disagreement_cycles: 1
+  after_limit_state: "stalled"
+  human_escalation_required_after_limit: true
+
+critical_files:
+  block_without_explicit_human_approval:
+    - "docs/07-decisions/**"
+    - ".github/workflows/**"
+    - "infrastructure/**"
+    - "apps/**"
+    - "packages/**"
+  note: "La issue puo autorizzare file specifici, ma l'estensione deve essere esplicita e documentata."
+
+conflict_resolution:
+  governance_precedence: true
+  conflict_with_governance_state: "stalled"
+  conflict_requires_human_approval: true
+  agent_must_not_choose_between_conflicting_sources: true

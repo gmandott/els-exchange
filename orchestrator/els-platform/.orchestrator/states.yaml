@@ -1,0 +1,166 @@
+# Public sanitized duplicate for external validation.
+# Source of truth: private els-platform:.orchestrator/states.yaml
+# Do not edit this duplicate; apply corrections in els-platform and recopy if needed.
+
+# Tassonomia tecnica degli stati.
+# La fonte normativa resta docs/00-project/ai-development-operating-model.md, sezione 3.3.
+version: "0.1"
+source_of_truth:
+  governance_section: "docs/00-project/ai-development-operating-model.md#33-tassonomia-degli-stati"
+  note: "Questo file materializza la tassonomia senza introdurre stati aggiuntivi."
+
+states:
+  draft:
+    description: "Issue o task non ancora pronto per assegnazione AI."
+    entered_by: ["human_approver", "orchestrator"]
+    entry_conditions:
+      - "La richiesta esiste ma non soddisfa tutti i criteri di readiness."
+    exit_conditions:
+      - "La issue viene completata con contesto, criteri di accettazione, area funzionale e dipendenze."
+      - "La issue viene cancellata."
+    allowed_transitions: ["needs-clarification", "ai-ready", "cancelled"]
+    human_intervention_required: true
+
+  needs-clarification:
+    description: "La issue contiene ambiguita o informazioni mancanti."
+    entered_by: ["orchestrator", "codex", "claude", "human_approver"]
+    entry_conditions:
+      - "Manca contesto, criterio di accettazione, area funzionale o informazione bloccante."
+      - "Sono presenti requisiti contraddittori."
+    exit_conditions:
+      - "L'umano chiarisce la richiesta."
+      - "Il task viene cancellato."
+    allowed_transitions: ["draft", "ai-ready", "cancelled"]
+    human_intervention_required: true
+
+  ai-ready:
+    description: "Issue pronta per analisi AI secondo i criteri di readiness."
+    entered_by: ["human_approver", "orchestrator"]
+    entry_conditions:
+      - "Contesto, obiettivo, criteri di accettazione, area funzionale e dipendenze sono sufficienti."
+      - "Lo scope autorizzato e il fuori scope sono chiari."
+    exit_conditions:
+      - "Inizia l'analisi."
+      - "Emergono ambiguita o baseline non verificabile."
+    allowed_transitions: ["in-analysis", "needs-clarification", "blocked-by-baseline", "cancelled"]
+    human_intervention_required: false
+
+  in-analysis:
+    description: "Codex analizza issue, repository e baseline prima dell'implementazione."
+    entered_by: ["codex", "orchestrator"]
+    entry_conditions:
+      - "Issue in stato ai-ready."
+      - "Working tree pulito e branch corretta."
+    exit_conditions:
+      - "Analisi completata e piano operativo pronto."
+      - "Rilevato bisogno di chiarimento, scope expansion o baseline bloccante."
+    allowed_transitions: ["in-analysis", "in-development", "needs-clarification", "scope-expansion-requested", "blocked-by-baseline", "stalled", "cancelled"]
+    human_intervention_required: false
+
+  in-development:
+    description: "Codex implementa lo scope approvato su branch dedicata."
+    entered_by: ["codex", "orchestrator"]
+    entry_conditions:
+      - "Analisi completata."
+      - "Baseline verificata o limiti della baseline documentati."
+      - "Nessuna ambiguita bloccante."
+    exit_conditions:
+      - "Modifica completata e controlli automatici eseguiti quando disponibili."
+      - "Rilevato conflitto, scope expansion, segreto o blocco."
+    allowed_transitions: ["in-development", "in-review", "scope-expansion-requested", "blocked-by-baseline", "needs-clarification", "stalled", "cancelled"]
+    human_intervention_required: false
+
+  in-review:
+    description: "Claude esegue revisione indipendente della PR o del diff."
+    entered_by: ["claude", "orchestrator"]
+    entry_conditions:
+      - "Draft PR o diff pronto."
+      - "Controlli disponibili completati o limiti documentati."
+    exit_conditions:
+      - "Review approvata."
+      - "Richieste modifiche."
+      - "Richiesta escalation umana."
+    allowed_transitions: ["changes-requested", "awaiting-human-approval", "stalled", "cancelled"]
+    human_intervention_required: false
+
+  changes-requested:
+    description: "La revisione richiede modifiche entro lo scope approvato."
+    entered_by: ["claude", "human_approver", "orchestrator"]
+    entry_conditions:
+      - "Review indipendente segnala problemi correggibili."
+    exit_conditions:
+      - "Codex applica le modifiche richieste."
+      - "Il conflitto richiede escalation umana."
+      - "Il task supera i limiti di iterazione."
+    allowed_transitions: ["in-development", "scope-expansion-requested", "awaiting-human-approval", "stalled", "cancelled"]
+    human_intervention_required: false
+
+  scope-expansion-requested:
+    description: "Serve modificare file, area o decisioni oltre lo scope approvato."
+    entered_by: ["codex", "claude", "orchestrator"]
+    entry_conditions:
+      - "L'implementazione richiede file o decisioni non autorizzati dalla issue."
+      - "Serve introdurre dipendenza, CI, infrastruttura, deploy o ADR."
+    exit_conditions:
+      - "L'umano approva o rifiuta l'estensione."
+    allowed_transitions: ["in-analysis", "in-development", "needs-clarification", "cancelled"]
+    human_intervention_required: true
+
+  blocked-by-baseline:
+    description: "La baseline di partenza non consente di validare il task."
+    entered_by: ["codex", "orchestrator"]
+    entry_conditions:
+      - "Test, lint, build o stato repository falliscono prima della modifica."
+      - "La baseline non e verificabile con gli strumenti disponibili."
+    exit_conditions:
+      - "L'umano decide come gestire la baseline."
+      - "La baseline viene corretta in task separato."
+    allowed_transitions: ["ai-ready", "in-analysis", "stalled", "cancelled"]
+    human_intervention_required: true
+
+  stalled:
+    description: "Il task e fermo per timeout, loop, conflitto o policy non risolta."
+    entered_by: ["orchestrator", "codex", "claude"]
+    entry_conditions:
+      - "Superato limite di iterazioni."
+      - "Conflitto tecnico non risolto."
+      - "Comando o controllo resta bloccato."
+      - "Policy violata o non interpretabile."
+    exit_conditions:
+      - "L'umano decide il prossimo passo."
+    allowed_transitions: ["needs-clarification", "ai-ready", "in-analysis", "in-development", "cancelled"]
+    human_intervention_required: true
+
+  awaiting-human-approval:
+    description: "La PR e pronta per valutazione umana; il merge resta manuale."
+    entered_by: ["claude", "orchestrator", "human_approver"]
+    entry_conditions:
+      - "Implementazione completata."
+      - "Revisione indipendente conclusa o escalation richiesta."
+      - "Draft PR pronta."
+    exit_conditions:
+      - "L'umano approva e mergea manualmente."
+      - "L'umano richiede modifiche o cancella il task."
+    allowed_transitions: ["awaiting-human-approval", "completed", "changes-requested", "cancelled"]
+    human_intervention_required: true
+
+  completed:
+    description: "Task completato e chiuso secondo governance."
+    entered_by: ["human_approver", "orchestrator"]
+    entry_conditions:
+      - "La PR e stata approvata e mergeata manualmente dall'umano, oppure il task documentale e stato chiuso come completato dall'umano."
+    exit_conditions:
+      - "Nessuna transizione ordinaria prevista."
+    allowed_transitions: []
+    human_intervention_required: true
+
+  cancelled:
+    description: "Task annullato o fuori scope."
+    entered_by: ["human_approver", "orchestrator"]
+    entry_conditions:
+      - "L'umano annulla il task."
+      - "La richiesta non e piu necessaria o non e approvata."
+    exit_conditions:
+      - "Nessuna transizione ordinaria prevista."
+    allowed_transitions: []
+    human_intervention_required: true
