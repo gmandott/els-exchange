@@ -1,0 +1,348 @@
+# Public sanitized duplicate for external validation.
+# Source of truth: private els-platform:.orchestrator/workflows.yaml
+# Do not edit this duplicate; apply corrections in els-platform and recopy if needed.
+
+# Workflow pilota v0.1.
+# Il merge resta sempre fuori dall'automazione ed e svolto solo dall'umano tramite GitHub.
+version: "0.1"
+source_of_truth:
+  governance_workflow: "docs/00-project/ai-development-operating-model.md#3-workflow-pilota"
+  states: ".orchestrator/states.yaml"
+  note: "Gli stati e i ruoli autorizzati a introdurli sono definiti in states.yaml, non in questo file."
+
+workflows:
+  issue-to-draft-pr:
+    description: "Trasforma una issue ai-ready in una draft PR revisionata, senza merge automatico."
+    status: "declarative_only"
+    trigger:
+      issue_state: "draft"
+      required_label: "ai-ready"
+      required_branch: "dedicated_task_branch"
+      next_step: "issue_readiness_check"
+    stop_before:
+      - "automatic_merge"
+      - "deploy"
+      - "production_access"
+    steps:
+      - id: "issue_readiness_check"
+        responsible_role: "orchestrator"
+        initial_state: "draft"
+        prerequisites:
+          - "Issue esistente."
+          - "Contesto e risultato desiderato leggibili."
+        success_criteria:
+          - "Contesto, criteri di accettazione, area funzionale e dipendenze sono sufficienti."
+          - "Fuori scope e file da non toccare sono chiari quando necessari."
+        stop_conditions:
+          - "Requisiti mancanti."
+          - "Contraddizione tra issue, AGENTS.md o governance."
+        outcomes:
+          - result: "ready"
+            next_state: "ai-ready"
+            next_step: "baseline_validation"
+            description: "La issue soddisfa i criteri di readiness."
+          - result: "needs_clarification"
+            next_state: "needs-clarification"
+            next_step: null
+            description: "La issue richiede chiarimenti umani."
+          - result: "cancelled"
+            next_state: "cancelled"
+            next_step: null
+            description: "La richiesta viene annullata dall'umano."
+        escalation: "Passare a needs-clarification e chiedere intervento umano."
+
+      - id: "baseline_validation"
+        responsible_role: "orchestrator"
+        initial_state: "ai-ready"
+        prerequisites:
+          - "Working tree pulito."
+          - "Branch di partenza aggiornata."
+          - "Comandi di controllo disponibili identificati."
+        success_criteria:
+          - "Baseline verificata o limiti documentati."
+          - "Errori preesistenti separati dagli errori del task."
+        stop_conditions:
+          - "Baseline non verificabile."
+          - "Test, lint o build falliscono in modo bloccante prima della modifica."
+        outcomes:
+          - result: "baseline_valid"
+            next_state: "in-analysis"
+            next_step: "analysis"
+            description: "La baseline consente di iniziare l'analisi."
+          - result: "baseline_blocked"
+            next_state: "blocked-by-baseline"
+            next_step: null
+            description: "La baseline impedisce una validazione affidabile."
+          - result: "needs_clarification"
+            next_state: "needs-clarification"
+            next_step: null
+            description: "La baseline genera ambiguita da chiarire."
+        escalation: "Passare a blocked-by-baseline."
+
+      - id: "analysis"
+        responsible_role: "codex"
+        initial_state: "in-analysis"
+        prerequisites:
+          - "Issue pronta."
+          - "Baseline validata o blocchi dichiarati."
+        success_criteria:
+          - "Sintesi, piano operativo, file probabili, rischi e controlli sono identificati."
+          - "Nessuna estensione di scope non approvata."
+        stop_conditions:
+          - "Ambiguita emersa."
+          - "Necessita di file fuori scope."
+        outcomes:
+          - result: "scope_already_approved"
+            next_state: "in-development"
+            next_step: "branch_creation"
+            description: "Lo scope e gia sufficientemente approvato dalla issue."
+          - result: "scope_confirmation_required"
+            next_state: "in-analysis"
+            next_step: "human_scope_confirmation"
+            description: "Lo scope richiede conferma umana prima dello sviluppo."
+          - result: "needs_clarification"
+            next_state: "needs-clarification"
+            next_step: null
+            description: "Servono chiarimenti sulla issue."
+          - result: "scope_expansion_needed"
+            next_state: "scope-expansion-requested"
+            next_step: null
+            description: "Serve autorizzazione umana per estendere il perimetro."
+          - result: "baseline_blocked"
+            next_state: "blocked-by-baseline"
+            next_step: null
+            description: "La baseline impedisce di procedere."
+        escalation: "Passare a needs-clarification o scope-expansion-requested."
+
+      - id: "human_scope_confirmation"
+        responsible_role: "human_approver"
+        initial_state: "in-analysis"
+        prerequisites:
+          - "Piano operativo disponibile quando il task e rischioso o ambiguo."
+        success_criteria:
+          - "Scope confermato dalla issue o da approvazione umana puntuale."
+        stop_conditions:
+          - "Scope non confermato."
+        outcomes:
+          - result: "scope_confirmed"
+            next_state: "in-development"
+            next_step: "branch_creation"
+            description: "L'umano conferma il perimetro operativo."
+          - result: "needs_clarification"
+            next_state: "needs-clarification"
+            next_step: null
+            description: "L'umano richiede chiarimenti."
+          - result: "scope_expansion_pending"
+            next_state: "scope-expansion-requested"
+            next_step: null
+            description: "L'estensione resta in attesa di decisione."
+        escalation: "Restare in needs-clarification o scope-expansion-requested."
+
+      - id: "branch_creation"
+        responsible_role: "codex"
+        initial_state: "in-development"
+        prerequisites:
+          - "Branch dedicata non riutilizzata."
+          - "Main aggiornato, salvo diversa indicazione della issue."
+        success_criteria:
+          - "Branch dedicata creata o verificata."
+          - "Branch name e baseline commit registrati."
+        stop_conditions:
+          - "Branch sporca, divergente o appartenente ad altro task."
+        outcomes:
+          - result: "branch_ready"
+            next_state: "in-development"
+            next_step: "implementation"
+            description: "La branch dedicata e pronta."
+          - result: "branch_blocked"
+            next_state: "stalled"
+            next_step: null
+            description: "La branch non puo essere usata in sicurezza."
+        escalation: "Passare a stalled e chiedere intervento umano."
+
+      - id: "implementation"
+        responsible_role: "codex"
+        initial_state: "in-development"
+        prerequisites:
+          - "Scope approvato."
+          - "Policy verificate."
+        success_criteria:
+          - "Modifiche piccole, verificabili e reversibili."
+          - "Nessun segreto, deploy, CI o dipendenza non approvata."
+          - "Nessuna modifica fuori scope."
+        stop_conditions:
+          - "Serve dipendenza o modifica infrastrutturale."
+          - "Rilevato segreto o file vietato."
+          - "Serve estendere lo scope."
+        outcomes:
+          - result: "implementation_complete"
+            next_state: "in-development"
+            next_step: "automated_checks"
+            description: "Le modifiche sono pronte per i controlli."
+          - result: "scope_expansion_needed"
+            next_state: "scope-expansion-requested"
+            next_step: null
+            description: "Serve autorizzazione umana per cambiare perimetro."
+          - result: "blocked"
+            next_state: "stalled"
+            next_step: null
+            description: "Un blocco operativo impedisce di proseguire."
+        escalation: "Passare a scope-expansion-requested o stalled."
+
+      - id: "automated_checks"
+        responsible_role: "codex"
+        initial_state: "in-development"
+        prerequisites:
+          - "Implementazione o correzioni review completate."
+          - "Comandi di controllo disponibili."
+        success_criteria:
+          - "Test, lint e build eseguiti quando disponibili."
+          - "Diff check e secrets check completati."
+          - "Limiti o controlli non disponibili documentati."
+        stop_conditions:
+          - "Fallimento introdotto dal task."
+          - "Secondo fallimento consecutivo su correzioni diverse."
+        outcomes:
+          - result: "checks_passed"
+            next_state: "in-development"
+            next_step: "draft_pull_request"
+            description: "I controlli consentono di aprire o aggiornare la draft PR."
+          - result: "fix_required"
+            next_state: "in-development"
+            next_step: "implementation"
+            description: "Codex corregge entro il limite di iterazioni."
+          - result: "checks_blocked"
+            next_state: "stalled"
+            next_step: null
+            description: "I controlli non sono risolvibili automaticamente."
+        escalation: "Correggere entro limite iterazioni oppure passare a stalled."
+
+      - id: "draft_pull_request"
+        responsible_role: "codex"
+        initial_state: "in-development"
+        prerequisites:
+          - "Branch pushata quando autorizzato."
+          - "Controlli e riepilogo disponibili."
+        success_criteria:
+          - "Draft PR aperta o aggiornata verso main."
+          - "Descrizione include sintesi, file creati, controlli, limiti e fuori scope."
+        stop_conditions:
+          - "Autenticazione GitHub non disponibile."
+          - "Branch non pushabile."
+        outcomes:
+          - result: "draft_pr_opened_or_updated"
+            next_state: "in-review"
+            next_step: "independent_review"
+            description: "La draft PR e disponibile per revisione Claude."
+          - result: "pr_blocked"
+            next_state: "stalled"
+            next_step: null
+            description: "Non e possibile aprire o aggiornare la draft PR."
+        escalation: "Chiedere intervento umano o correggere autenticazione senza bypassare policy."
+
+      - id: "independent_review"
+        responsible_role: "claude"
+        initial_state: "in-review"
+        prerequisites:
+          - "Draft PR disponibile."
+          - "Controlli eseguiti o limiti documentati."
+        success_criteria:
+          - "Review indipendente completata sulla draft PR."
+          - "Esito approved, changes-requested o human-escalation."
+        stop_conditions:
+          - "Violazione scope, sicurezza o regressione."
+          - "Disaccordo tecnico oltre un ciclo di replica."
+        outcomes:
+          - result: "approved"
+            next_state: "awaiting-human-approval"
+            next_step: "human_approval"
+            description: "La review non richiede modifiche bloccanti."
+          - result: "changes_requested"
+            next_state: "changes-requested"
+            next_step: "apply_review_changes"
+            description: "La review richiede ritorno a Codex nello scope approvato."
+          - result: "human_escalation"
+            next_state: "awaiting-human-approval"
+            next_step: "human_approval"
+            description: "Serve decisione umana su rischio, scope, sicurezza o architettura."
+          - result: "review_blocked"
+            next_state: "stalled"
+            next_step: null
+            description: "La review non puo concludersi in modo affidabile."
+        escalation: "Passare a changes-requested o awaiting-human-approval con escalation."
+
+      - id: "apply_review_changes"
+        responsible_role: "codex"
+        initial_state: "changes-requested"
+        prerequisites:
+          - "Review indipendente con esito changes-requested."
+          - "Correzioni richieste entro lo scope gia approvato."
+        success_criteria:
+          - "Codex applica solo le correzioni richieste."
+          - "Nessuna estensione di scope, governance, CI, deploy o dipendenza."
+        stop_conditions:
+          - "Le correzioni richiedono estensione di scope."
+          - "Le correzioni richiedono decisione umana."
+        outcomes:
+          - result: "review_changes_applied"
+            next_state: "in-development"
+            next_step: "automated_checks"
+            description: "Le correzioni review sono pronte per nuovi controlli."
+          - result: "scope_expansion_needed"
+            next_state: "scope-expansion-requested"
+            next_step: null
+            description: "Le correzioni richieste superano lo scope approvato."
+          - result: "blocked"
+            next_state: "stalled"
+            next_step: null
+            description: "Le correzioni non sono applicabili automaticamente."
+        escalation: "Passare a scope-expansion-requested o stalled."
+
+      - id: "human_approval"
+        responsible_role: "human_approver"
+        initial_state: "awaiting-human-approval"
+        prerequisites:
+          - "Draft PR pronta."
+          - "Review indipendente presente o escalation esplicita."
+        success_criteria:
+          - "L'umano approva, richiede modifiche o annulla."
+        stop_conditions:
+          - "Richieste modifiche."
+          - "Rischio non accettato."
+        outcomes:
+          - result: "approved_for_manual_merge"
+            next_state: "awaiting-human-approval"
+            next_step: "manual_merge"
+            description: "L'umano approva il merge manuale."
+          - result: "changes_requested"
+            next_state: "changes-requested"
+            next_step: "apply_review_changes"
+            description: "L'umano richiede modifiche prima del merge."
+          - result: "cancelled"
+            next_state: "cancelled"
+            next_step: null
+            description: "L'umano annulla il task."
+        escalation: "Passare a changes-requested o cancelled."
+
+      - id: "manual_merge"
+        responsible_role: "human_approver"
+        initial_state: "awaiting-human-approval"
+        prerequisites:
+          - "Approvazione umana esplicita."
+          - "PR pronta al merge secondo protezioni GitHub."
+        success_criteria:
+          - "Merge eseguito manualmente dall'umano tramite GitHub."
+          - "Nessun agente ha eseguito merge."
+        stop_conditions:
+          - "Qualunque tentativo di merge automatico."
+        outcomes:
+          - result: "merged_by_human"
+            next_state: "completed"
+            next_step: null
+            description: "Il task e completato dopo merge manuale umano."
+          # Stato di attesa: richiede intervento umano prima di ogni ulteriore tentativo di merge.
+          - result: "merge_blocked"
+            next_state: "awaiting-human-approval"
+            next_step: null
+            description: "La PR resta in attesa di intervento umano."
+        escalation: "Bloccare il workflow e segnalare violazione di governance."

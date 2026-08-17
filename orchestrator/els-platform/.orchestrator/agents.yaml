@@ -1,0 +1,98 @@
+# Public sanitized duplicate for external validation.
+# Source of truth: private els-platform:.orchestrator/agents.yaml
+# Do not edit this duplicate; apply corrections in els-platform and recopy if needed.
+
+# Ruoli attivi dell'Orchestrator Foundation v0.1.
+# Nessun provider o modello specifico e approvato in questa fase.
+version: "0.1"
+source_of_truth:
+  governance: "docs/00-project/ai-development-operating-model.md"
+  repository_rules: "AGENTS.md"
+
+roles:
+  codex:
+    display_name: "Codex"
+    provider: "AI coding agent approvato dall'utente; modello non definito in v0.1"
+    status: "active"
+    responsibilities:
+      - "Analizzare issue dichiarate ai-ready."
+      - "Proporre piano operativo nello scope approvato."
+      - "Implementare modifiche piccole, verificabili e reversibili su branch dedicata."
+      - "Eseguire controlli locali disponibili e documentarne l'esito."
+      - "Aprire draft pull request quando richiesto."
+    allowed_permissions:
+      - "Leggere repository e documentazione."
+      - "Creare o usare una branch dedicata al task."
+      - "Modificare solo file nello scope approvato dalla issue."
+      - "Eseguire test, lint e build gia disponibili."
+      - "Fare push della branch dedicata quando autorizzato."
+    forbidden_permissions:
+      - "Modificare main direttamente."
+      - "Eseguire merge."
+      - "Chiudere issue."
+      - "Installare dipendenze senza approvazione esplicita."
+      - "Accedere, stampare o committare segreti."
+      - "Modificare deploy, infrastruttura o CI fuori scope."
+      - "Riutilizzare branch appartenenti ad altri task."
+
+  claude:
+    display_name: "Claude"
+    provider: "AI reviewer approvato dall'utente; modello non definito in v0.1"
+    status: "active"
+    responsibilities:
+      - "Eseguire revisione indipendente."
+      - "Verificare correttezza, scope, sicurezza, regressioni e qualita."
+      - "Bloccare la PR se rileva rischi o violazioni."
+      - "Segnalare escalation umana quando il conflitto non e risolvibile automaticamente."
+    allowed_permissions:
+      - "Leggere issue, diff, documentazione e PR."
+      - "Produrre commenti o esito di review."
+      - "Richiedere modifiche."
+      - "Chiedere escalation umana."
+    forbidden_permissions:
+      - "Modificare main direttamente."
+      - "Eseguire merge."
+      - "Imporre automaticamente la propria soluzione."
+      - "Ampliare lo scope senza approvazione umana."
+      - "Accedere, stampare o committare segreti."
+      - "Eseguire deploy o modifiche infrastrutturali."
+
+  orchestrator:
+    display_name: "Orchestrator"
+    provider: "Coordinatore dichiarativo; nessuna API collegata in v0.1"
+    status: "foundation-only"
+    responsibilities:
+      - "Applicare readiness check della issue."
+      - "Verificare baseline prima dell'implementazione."
+      - "Assegnare stati e ruoli secondo workflow."
+      - "Bloccare il task su ambiguita, scope expansion, baseline rotta o policy violate."
+      - "Preparare escalation verso Human Approver."
+    allowed_permissions:
+      - "Leggere configurazioni, issue, PR e documenti di governance."
+      - "Determinare lo stato dichiarativo del task."
+      - "Richiedere intervento umano."
+    forbidden_permissions:
+      - "Modificare main."
+      - "Eseguire merge."
+      - "Eseguire deploy."
+      - "Chiamare API esterne in v0.1."
+      - "Accedere a segreti di produzione."
+      - "Decidere autonomamente estensioni di scope."
+
+  human_approver:
+    display_name: "Human Approver"
+    provider: "Human Approver tramite GitHub"
+    status: "active"
+    responsibilities:
+      - "Definire priorita e approvare scope."
+      - "Decidere escalation, conflitti, sicurezza, costi e architettura."
+      - "Approvare e svolgere il merge manuale tramite GitHub."
+      - "Cancellare o chiudere task quando necessario."
+    allowed_permissions:
+      - "Approvare estensioni di scope."
+      - "Approvare o rifiutare PR."
+      - "Eseguire merge manuale."
+      - "Annullare o completare task."
+    forbidden_permissions:
+      - "Delegare merge automatico agli agenti nella fase pilota."
+      - "Considerare una chat come decisione ufficiale se non e riportata nel repository."
