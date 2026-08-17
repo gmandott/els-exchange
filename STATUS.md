@@ -7,9 +7,10 @@ Data ultimo aggiornamento: 17 agosto 2026
 ### Orchestration Practices
 
 - Modello operativo: pubblicato su main (`orchestration-practices/governance/orchestration-practices-operating-model.md`)
-- Segnali in `signals/inbox/`: nessun segnale ancora presente; cartella `signals/` non esistente
-- Schede in `candidates/` in attesa di revisione Claude: nessuna scheda presente; cartella `candidates/` non esistente
-- Ultima revisione Claude completata: riferimento presente in `orchestrator/els-platform/docs/00-project/orchestrator-pilot-final-review.md`; data/esito non attestati da questo indice
+- Segnali in `orchestration-practices/signals/inbox/`: cartella presente; nessun segnale presente oltre al README di mantenimento directory
+- Schede in `orchestration-practices/candidates/` in attesa di revisione Claude: cartella presente; nessuna scheda presente oltre al README di mantenimento directory
+- Directory di flusso presenti: `orchestration-practices/signals/inbox/`, `orchestration-practices/signals/selected/`, `orchestration-practices/signals/rejected/`, `orchestration-practices/candidates/`, `orchestration-practices/approved/`, `orchestration-practices/published/`
+- Riferimento a revisione Claude: file presente in `orchestrator/els-platform/docs/00-project/orchestrator-pilot-final-review.md`; data/esito non attestati da questo indice
 
 ### Materiale di validazione els-platform
 
