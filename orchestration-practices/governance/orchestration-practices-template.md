@@ -1,7 +1,7 @@
 # Orchestration Practices — Practice Template
 
 > Usare questo template solo per schede pratica complete create dopo selezione esplicita del segnale da parte di Gianluca.
-> Le schede depositate in `candidates/` devono essere gia sanificate e verificate da Codex prima del deposito.
+> Le schede depositate in `orchestration-practices/candidates/` devono essere gia sanificate e verificate da Codex prima del deposito.
 
 ## Metadati
 

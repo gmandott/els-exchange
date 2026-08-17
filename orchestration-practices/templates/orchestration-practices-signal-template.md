@@ -1,6 +1,6 @@
 # Orchestration Practices — Signal Template
 
-> Usare questo template per creare un singolo segnale leggero in `signals/inbox/`.
+> Usare questo template per creare un singolo segnale leggero in `orchestration-practices/signals/inbox/`.
 > Naming previsto: `YYYY-MM-DD-progetto-slug-breve.md`.
 > Non inserire dati personali, dati cliente, prezzi riservati, credenziali, token, endpoint interni, percorsi locali, vulnerabilita attive o dettagli non sanificati.
 
@@ -38,5 +38,5 @@ Descrivere in modo sintetico e sanificato il motivo per cui il caso merita valut
 
 ## Stato
 
-- Stato iniziale: `signals/inbox/`
+- Stato iniziale: `orchestration-practices/signals/inbox/`
 - Decisione di selezione: da compilare solo dopo valutazione di Gianluca
