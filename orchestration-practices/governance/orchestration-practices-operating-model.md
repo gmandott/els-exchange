@@ -3,27 +3,55 @@
 **Orchestration Practices**
 Real work. Human decisions. Multi-agent coordination.
 
-Versione: 0.1
+Versione: 0.2
 Stato: pilota
-Responsabile e approvatore finale: Gianluca
+Responsabile operativo del modulo: Claude, nel perimetro HITF
+Approvatore finale: Gianluca
 
 ## Scopo
 
-Orchestration Practices è un progetto indipendente che raccoglie, verifica e rende trasferibili pratiche reali di collaborazione tra persone e agenti AI: decisioni, responsabilità, passaggi di consegna, revisioni, errori, correzioni e risultati.
+Orchestration Practices raccoglie, verifica e rende trasferibili pratiche reali di collaborazione tra persone e agenti AI: decisioni, responsabilità, passaggi di consegna, revisioni, errori, correzioni e risultati.
+
+**Orchestration Practices è un modulo del binario Human in the Field (HITF), non il sistema Orchestrator.** L'Orchestrator governa il lavoro operativo sui progetti; Orchestration Practices osserva a valle le esperienze rilevanti e ne estrae metodo trasferibile e pubblicabile.
 
 Questo documento definisce come Orchestration Practices raccoglie segnali dai progetti operativi, li seleziona e li trasforma in pratiche sanificate, revisionate e pubblicate solo con approvazione umana.
 
 Orchestration Practices non sostituisce i progetti operativi e non diventa la loro fonte di verità. Le pratiche pubblicate derivano dall'esperienza reale, ma restano duplicati generalizzati e autonomi.
 
+## Relazione con Orchestrator e HITF
+
+```text
+Gianluca
+   ↓
+Orchestrator operativo — GPT/ChatGPT
+   ↓
+progetti operativi (es. els-platform)
+   ↓
+esperienze reali rilevanti
+   ↓
+HITF — Claude
+   ├── case history / contenuti editoriali
+   └── Orchestration Practices — pratiche trasferibili
+   ↓
+approvazione finale Gianluca
+```
+
+La separazione dei perimetri è vincolante durante il pilota:
+
+* **GPT/ChatGPT** governa l'Orchestrator operativo e coordina il lavoro sui progetti, in primis `els-platform`.
+* **Claude** governa operativamente il binario HITF e, al suo interno, Orchestration Practices.
+* **Codex, VS Code + Copilot, Claude Code e altri agenti** sono capacità operative o di revisione attivabili nei rispettivi workflow; non diventano automaticamente owner del sistema che stanno assistendo.
+* **Gianluca** mantiene l'approvazione finale, il controllo sul merge e l'autorizzazione alla pubblicazione.
+
 ## Principi
 
-* Orchestration Practices è un **modulo satellite e autonomo**: collegato ai progetti operativi come fonte di pratiche, ma non integrato nei loro workflow bloccanti.
+* Orchestration Practices è un **modulo satellite di HITF**: collegato ai progetti operativi come fonte di pratiche, ma non integrato nei loro workflow bloccanti.
 * La valutazione Orchestration Practices alla chiusura di un'attività è **sempre non bloccante**: non ritarda, non condiziona e non richiede approvazione per la chiusura del lavoro operativo.
 * Nessuna pratica viene pubblicata senza sanificazione, revisione indipendente e approvazione umana esplicita.
-* Durante il pilota, Gianluca è l'unico responsabile della selezione delle pratiche e dell'approvazione finale.
-* Codex coordina il processo operativo e può preparare segnali, schede e materiali, ma **non può approvarli o pubblicarli autonomamente**.
-* Claude svolge la revisione indipendente al termine della preparazione e dichiara sempre il perimetro effettivamente verificato.
-* Gli altri agenti possono segnalare casi rilevanti e assistere nella preparazione, ma non sostituiscono la revisione indipendente né l'approvazione umana.
+* Claude mantiene l'ownership operativa del modulo: valuta i segnali, propone selezioni, coordina la preparazione delle schede e garantisce coerenza con HITF.
+* Durante il pilota, Gianluca è l'unico approvatore finale delle pratiche e delle pubblicazioni.
+* Codex e gli altri agenti possono preparare segnali, schede e materiali su incarico, ma **non possono approvarli o pubblicarli autonomamente**.
+* La revisione indipendente deve essere svolta da un reviewer separato dal soggetto/istanza che ha preparato il candidate; l'ownership Claude non sostituisce questo controllo.
 * Orchestration Practices non modifica automaticamente stati, permessi, workflow o Definition of Done dei progetti osservati.
 * Un'eventuale integrazione tecnica futura sarà valutata solo dopo la validazione del pilota.
 
@@ -31,10 +59,11 @@ Orchestration Practices non sostituisce i progetti operativi e non diventa la lo
 
 | Ruolo | Responsabilità |
 | --- | --- |
-| **Gianluca** | Seleziona i segnali da promuovere, approva o rifiuta le schede pratica e autorizza la pubblicazione. Conserva l'approvazione finale e il controllo sul merge. È l'unico approvatore durante il pilota. |
-| **Codex — coordinatore operativo** | Coordina il flusso Orchestration Practices, prepara segnali e schede pratica, verifica la completezza del pacchetto, registra le attività e predispone il materiale per la revisione indipendente. Non può approvare il proprio lavoro, rimuovere autonomamente lo stato Draft, effettuare merge o pubblicare senza autorizzazione. |
-| **Claude — revisore indipendente** | Opera nel contesto del repository pubblico `els-exchange`. Esamina il materiale preparato al termine dell'attività. Verifica coerenza, sicurezza, sanificazione e corrispondenza alle evidenze accessibili. Dichiara il perimetro verificato e le eventuali dipendenze da verifiche altrui. Non sostituisce l'approvazione finale di Gianluca. |
-| **Agenti operativi** | Al termine di un'attività valutano se ricorre un criterio di rilevanza e, solo in caso affermativo, possono produrre un segnale leggero. Non creano automaticamente schede complete e non pubblicano nulla. |
+| **Gianluca — Human Approver** | Decide la selezione finale dei segnali da promuovere, approva o rifiuta le schede pratica, autorizza la pubblicazione e conserva il controllo sul merge. È l'unico approvatore finale durante il pilota. |
+| **Claude — owner operativo HITF / Orchestration Practices** | Governa il flusso Orchestration Practices nel perimetro HITF: valuta i segnali, propone quali casi sviluppare, coordina la trasformazione in pratica trasferibile, verifica coerenza editoriale e completezza del pacchetto. Non può sostituire l'approvazione finale di Gianluca. Quando Claude o una sua istanza ha partecipato sostanzialmente alla preparazione di un candidate, quella stessa istanza non può fungere da revisore indipendente del candidate. |
+| **GPT / ChatGPT — Orchestrator operativo** | Governa il lavoro sui progetti operativi e può trasferire a HITF/Orchestration Practices segnali o contesto sanificato. Non coordina il flusso editoriale di Orchestration Practices e non ne è l'owner. |
+| **Codex / VS Code + Copilot / altri agenti operativi** | Possono produrre segnali leggeri al termine di attività reali e assistere Claude nella preparazione di schede e materiali. Non selezionano definitivamente, non approvano e non pubblicano. |
+| **Reviewer indipendente** | Esamina il candidate completo e stabile da una posizione separata rispetto alla preparazione. Verifica coerenza, sicurezza, sanificazione e corrispondenza alle evidenze accessibili; dichiara sempre il perimetro effettivamente verificato. Può essere un'istanza Claude distinta o altro reviewer autorizzato, purché non abbia preparato sostanzialmente il materiale oggetto di revisione. |
 
 ## Flusso operativo
 
@@ -48,7 +77,13 @@ criterio di rilevanza rilevato? ──── no ──→ nessuna azione
 segnale leggero  →  signals/inbox/
         │
         ▼
-selezione della pratica (Gianluca)
+valutazione editoriale (Claude / HITF)
+        │
+        ▼
+proposta di selezione
+        │
+        ▼
+decisione della pratica (Gianluca)
         │
    ┌────┴────┐
    ▼         ▼
@@ -58,10 +93,10 @@ selected/  rejected/
 scheda pratica completa  →  candidates/
         │
         ▼
-sanificazione + preparazione (Codex)
+sanificazione + preparazione (Claude, con supporto agenti)
         │
         ▼
-revisione indipendente (Claude, via els-exchange)
+revisione indipendente (reviewer separato)
         │
         ▼
 approvazione esplicita (Gianluca)  →  approved/
@@ -84,7 +119,7 @@ La chiusura dell'attività nel progetto originario non dipende dal completamento
 * Viene prodotto solo quando un agente rileva almeno uno dei criteri di rilevanza definiti sotto, non al termine di ogni attività.
 * Il segnale identifica il progetto originario, ma non diventa una nuova fonte di verità sul progetto.
 * La correzione di eventuali errori deve avvenire prima nel repository originario. Il duplicato pubblico potrà essere successivamente riallineato.
-* `signals/inbox/` viene normalmente revisionata da Gianluca una volta alla settimana, senza impedire revisioni anticipate quando emerge un caso forte o urgente.
+* `signals/inbox/` viene normalmente valutata da Claude nel perimetro HITF e sottoposta a Gianluca per la decisione di selezione, senza impedire revisioni anticipate quando emerge un caso forte o urgente.
 * La struttura è definita in `templates/orchestration-practices-signal-template.md`.
 
 ### Vincolo di riservatezza
@@ -125,7 +160,7 @@ La presenza di un criterio autorizza soltanto la segnalazione. **Non** autorizza
 
 ## Scheda pratica completa
 
-La scheda pratica viene creata solo per i segnali selezionati da Gianluca, mai automaticamente.
+La scheda pratica viene creata solo per i segnali selezionati da Gianluca dopo la valutazione Claude, mai automaticamente.
 
 La struttura è definita in `governance/orchestration-practices-template.md` e comprende almeno:
 
@@ -145,7 +180,9 @@ La sanificazione automatica o assistita non sostituisce mai il controllo umano f
 
 ## Revisione indipendente
 
-Claude, operante nel contesto del repository pubblico `els-exchange`, interviene quando il pacchetto è completo e stabile. La revisione è richiesta per **ogni scheda pratica completa** che entra in `candidates/`, non solo in presenza di trigger specifici: qui il gate protegge una pubblicazione esterna, non un evento del lavoro operativo interno, e il volume iniziale atteso è basso.
+La revisione indipendente interviene quando il pacchetto è completo e stabile. È richiesta per **ogni scheda pratica completa** che entra in `candidates/`, non solo in presenza di trigger specifici: qui il gate protegge una pubblicazione esterna, non un evento del lavoro operativo interno, e il volume iniziale atteso è basso.
+
+Il reviewer deve essere separato dalla preparazione sostanziale del candidate. Se Claude ha operato come owner editoriale o preparatore del materiale, la revisione deve essere affidata a un'istanza distinta che riceva un perimetro di verifica esplicito oppure a un altro reviewer autorizzato. La distinzione deve essere documentata nel candidate.
 
 La revisione deve:
 
@@ -166,7 +203,7 @@ Il gate si applica esclusivamente a `candidates/`: resta non bloccante per `sign
 
 ## Repository e visibilità
 
-Orchestration Practices vive nel repository pubblico `els-exchange`, separato dai repository operativi dei singoli progetti.
+Orchestration Practices vive nel repository pubblico `els-exchange`, separato sia dal repository HITF sia dai repository operativi dei singoli progetti. La collocazione pubblica non ne cambia l'appartenenza funzionale: **Orchestration Practices è parte del binario HITF**.
 
 I progetti operativi, come `els-platform`, restano:
 
@@ -180,25 +217,26 @@ I contenuti presenti in `els-exchange/orchestration-practices/` sono duplicati p
 
 Non tutti i contenuti di `els-exchange` hanno la stessa durata:
 
-* **`orchestration-practices-operating-model.md`** e gli altri documenti di governance in `governance/` sono contenuti permanenti: definiscono il progetto stesso e restano nel repository, non vengono mai cancellati periodicamente.
+* **`orchestration-practices-operating-model.md`** e gli altri documenti di governance in `governance/` sono contenuti permanenti: definiscono il modulo e restano nel repository, non vengono mai cancellati periodicamente.
 * **`candidates/`** è uno spazio di transito: contiene schede pratica in attesa di revisione. Una volta che una scheda riceve un esito (approvata → `approved/` → `published/`, oppure rifiutata), la sua presenza in `candidates/` non ha più motivo di persistere e può essere rimossa secondo la cadenza di pulizia definita da Gianluca.
-* **`published/`** contiene le pratiche pubblicate: è l'obiettivo del progetto, non un passaggio temporaneo. Non viene cancellato — è la knowledge base trasferibile che il progetto costruisce nel tempo.
+* **`published/`** contiene le pratiche pubblicate: è l'obiettivo del modulo, non un passaggio temporaneo. Non viene cancellato — è la knowledge base trasferibile che il progetto costruisce nel tempo.
 * Materiale di scambio tecnico non editoriale (es. duplicati sanificati di file `els-platform` per validazione esterna one-off, non collegati a una scheda pratica) è per natura temporaneo: va rimosso dopo che la validazione richiesta è stata completata, con cadenza da definire in base all'uso reale osservato nelle prime settimane.
 
 La cadenza esatta di pulizia per i contenuti di transito non è fissata ora: verrà decisa dopo aver osservato il volume reale generato nel primo periodo di attività, coerente con il principio di non anticipare strutture non ancora giustificate dall'esperienza.
 
-**Le schede pratica depositate in `els-exchange/orchestration-practices/candidates/` devono essere già sanificate e verificate da Codex prima del deposito.** Il repository è pubblico: chiunque può clonarlo in qualsiasi momento, indipendentemente dalla sottocartella. Il deposito in `candidates/` non è un mezzo per far leggere bozze non ancora pulite a Claude — presuppone che la sanificazione sia già stata completata a monte.
+**Le schede pratica depositate in `els-exchange/orchestration-practices/candidates/` devono essere già sanificate e verificate prima del deposito.** Il repository è pubblico: chiunque può clonarlo in qualsiasi momento, indipendentemente dalla sottocartella. Il deposito in `candidates/` non è un mezzo per esporre bozze non ancora pulite al reviewer — presuppone che la sanificazione sia già stata completata a monte.
 
-HITF resta un progetto distinto:
+HITF e Orchestration Practices hanno funzioni complementari:
 
-* Orchestration Practices estrae e struttura il metodo trasferibile;
-* HITF può raccontare l'esperienza umana e il caso reale;
-* nessuno dei due modifica automaticamente il workflow dell'altro.
+* HITF governa il binario editoriale e può raccontare l'esperienza umana e il caso reale;
+* Orchestration Practices, al suo interno, estrae e struttura il metodo trasferibile;
+* nessuno dei due modifica automaticamente il workflow dell'Orchestrator o dei progetti osservati.
 
 ## Confini espliciti
 
 Durante il pilota, Orchestration Practices:
 
+* non è il sistema Orchestrator e non ne assume il governo operativo;
 * non modifica automaticamente stati, permessi o Definition of Done dei progetti operativi;
 * non introduce automazioni di pubblicazione;
 * non introduce nuovi permessi o dipendenze;
@@ -212,7 +250,7 @@ Durante il pilota, Orchestration Practices:
 
 ## Stato del documento
 
-Prima versione del pilota Orchestration Practices.
+Versione del pilota aggiornata per chiarire l'appartenenza di Orchestration Practices al binario HITF e la separazione tra Orchestrator operativo (GPT/ChatGPT), ownership HITF/Orchestration Practices (Claude), revisione indipendente e approvazione finale umana.
 
 Il modello deve essere riesaminato dopo i primi casi reali, senza anticipare automazioni o strutture non ancora giustificate dall'esperienza.
 
