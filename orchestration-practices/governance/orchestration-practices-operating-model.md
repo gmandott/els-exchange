@@ -3,9 +3,10 @@
 **Orchestration Practices**
 Real work. Human decisions. Multi-agent coordination.
 
-Versione: 0.2
+Versione: 0.3
 Stato: pilota
 Responsabile operativo del modulo: Claude, nel perimetro HITF
+Validatore indipendente esterno: GPT/ChatGPT
 Approvatore finale: Gianluca
 
 ## Scopo
@@ -24,14 +25,17 @@ Orchestration Practices non sostituisce i progetti operativi e non diventa la lo
 Gianluca
    ↓
 Orchestrator operativo — GPT/ChatGPT
-   ↓
-progetti operativi (es. els-platform)
+   ↓                         ↑
+progetti operativi        validazione esterna: Claude
+(es. els-platform)
    ↓
 esperienze reali rilevanti
    ↓
 HITF — Claude
    ├── case history / contenuti editoriali
    └── Orchestration Practices — pratiche trasferibili
+   ↓
+validazione esterna: GPT/ChatGPT
    ↓
 approvazione finale Gianluca
 ```
@@ -40,8 +44,22 @@ La separazione dei perimetri è vincolante durante il pilota:
 
 * **GPT/ChatGPT** governa l'Orchestrator operativo e coordina il lavoro sui progetti, in primis `els-platform`.
 * **Claude** governa operativamente il binario HITF e, al suo interno, Orchestration Practices.
+* **Claude è il validatore indipendente esterno dell'Orchestrator quando previsto dalla governance del progetto operativo.**
+* **GPT/ChatGPT è il validatore indipendente esterno di HITF/Orchestration Practices quando previsto da questo flusso.**
 * **Codex, VS Code + Copilot, Claude Code e altri agenti** sono capacità operative o di revisione attivabili nei rispettivi workflow; non diventano automaticamente owner del sistema che stanno assistendo.
 * **Gianluca** mantiene l'approvazione finale, il controllo sul merge e l'autorizzazione alla pubblicazione.
+
+## Principio di separazione owner/reviewer
+
+L'agente che governa operativamente un binario non può fungere da validatore indipendente esterno dello stesso binario.
+
+Durante il pilota:
+
+* GPT/ChatGPT governa Orchestrator → validatore indipendente esterno: **Claude**;
+* Claude governa HITF/Orchestration Practices → validatore indipendente esterno: **GPT/ChatGPT**;
+* Gianluca resta l'approvatore finale in entrambi i casi.
+
+La validazione indipendente verifica e contesta quando necessario, ma non trasferisce l'ownership del binario al reviewer.
 
 ## Principi
 
@@ -51,7 +69,7 @@ La separazione dei perimetri è vincolante durante il pilota:
 * Claude mantiene l'ownership operativa del modulo: valuta i segnali, propone selezioni, coordina la preparazione delle schede e garantisce coerenza con HITF.
 * Durante il pilota, Gianluca è l'unico approvatore finale delle pratiche e delle pubblicazioni.
 * Codex e gli altri agenti possono preparare segnali, schede e materiali su incarico, ma **non possono approvarli o pubblicarli autonomamente**.
-* La revisione indipendente deve essere svolta da un reviewer separato dal soggetto/istanza che ha preparato il candidate; l'ownership Claude non sostituisce questo controllo.
+* La revisione indipendente esterna di Orchestration Practices è affidata a GPT/ChatGPT; l'ownership Claude non sostituisce questo controllo.
 * Orchestration Practices non modifica automaticamente stati, permessi, workflow o Definition of Done dei progetti osservati.
 * Un'eventuale integrazione tecnica futura sarà valutata solo dopo la validazione del pilota.
 
@@ -60,10 +78,9 @@ La separazione dei perimetri è vincolante durante il pilota:
 | Ruolo | Responsabilità |
 | --- | --- |
 | **Gianluca — Human Approver** | Decide la selezione finale dei segnali da promuovere, approva o rifiuta le schede pratica, autorizza la pubblicazione e conserva il controllo sul merge. È l'unico approvatore finale durante il pilota. |
-| **Claude — owner operativo HITF / Orchestration Practices** | Governa il flusso Orchestration Practices nel perimetro HITF: valuta i segnali, propone quali casi sviluppare, coordina la trasformazione in pratica trasferibile, verifica coerenza editoriale e completezza del pacchetto. Non può sostituire l'approvazione finale di Gianluca. Quando Claude o una sua istanza ha partecipato sostanzialmente alla preparazione di un candidate, quella stessa istanza non può fungere da revisore indipendente del candidate. |
-| **GPT / ChatGPT — Orchestrator operativo** | Governa il lavoro sui progetti operativi e può trasferire a HITF/Orchestration Practices segnali o contesto sanificato. Non coordina il flusso editoriale di Orchestration Practices e non ne è l'owner. |
+| **Claude — owner operativo HITF / Orchestration Practices** | Governa il flusso Orchestration Practices nel perimetro HITF: valuta i segnali, propone quali casi sviluppare, coordina la trasformazione in pratica trasferibile, verifica coerenza editoriale e completezza del pacchetto. Non può sostituire l'approvazione finale di Gianluca né validare indipendentemente il proprio binario. |
+| **GPT / ChatGPT — Orchestrator operativo e validatore esterno HITF** | Governa il lavoro sui progetti operativi e può trasferire a HITF/Orchestration Practices segnali o contesto sanificato. Non coordina il flusso editoriale di Orchestration Practices e non ne è l'owner. Quando il candidate è completo e stabile, svolge la validazione indipendente esterna nel perimetro dichiarato. |
 | **Codex / VS Code + Copilot / altri agenti operativi** | Possono produrre segnali leggeri al termine di attività reali e assistere Claude nella preparazione di schede e materiali. Non selezionano definitivamente, non approvano e non pubblicano. |
-| **Reviewer indipendente** | Esamina il candidate completo e stabile da una posizione separata rispetto alla preparazione. Verifica coerenza, sicurezza, sanificazione e corrispondenza alle evidenze accessibili; dichiara sempre il perimetro effettivamente verificato. Può essere un'istanza Claude distinta o altro reviewer autorizzato, purché non abbia preparato sostanzialmente il materiale oggetto di revisione. |
 
 ## Flusso operativo
 
@@ -96,7 +113,7 @@ scheda pratica completa  →  candidates/
 sanificazione + preparazione (Claude, con supporto agenti)
         │
         ▼
-revisione indipendente (reviewer separato)
+validazione indipendente esterna (GPT/ChatGPT)
         │
         ▼
 approvazione esplicita (Gianluca)  →  approved/
@@ -180,18 +197,17 @@ La sanificazione automatica o assistita non sostituisce mai il controllo umano f
 
 ## Revisione indipendente
 
-La revisione indipendente interviene quando il pacchetto è completo e stabile. È richiesta per **ogni scheda pratica completa** che entra in `candidates/`, non solo in presenza di trigger specifici: qui il gate protegge una pubblicazione esterna, non un evento del lavoro operativo interno, e il volume iniziale atteso è basso.
-
-Il reviewer deve essere separato dalla preparazione sostanziale del candidate. Se Claude ha operato come owner editoriale o preparatore del materiale, la revisione deve essere affidata a un'istanza distinta che riceva un perimetro di verifica esplicito oppure a un altro reviewer autorizzato. La distinzione deve essere documentata nel candidate.
+GPT/ChatGPT, in qualità di validatore indipendente esterno del binario HITF/Orchestration Practices, interviene quando il pacchetto è completo e stabile. La revisione è richiesta per **ogni scheda pratica completa** che entra in `candidates/`: qui il gate protegge una potenziale pubblicazione esterna e non il lavoro operativo del progetto originario.
 
 La revisione deve:
 
 * riferirsi alla versione esatta del materiale esaminato;
-* verificare il contenuto grezzo integrale disponibile nel proprio perimetro;
+* verificare il contenuto disponibile nel proprio perimetro;
 * controllare coerenza, sanificazione e corrispondenza alle evidenze accessibili;
 * indicare cosa è stato verificato direttamente;
 * indicare cosa non è stato verificato;
-* dichiarare eventuali dipendenze da controlli eseguiti da altri.
+* dichiarare eventuali dipendenze da controlli eseguiti da altri;
+* non assumere ownership editoriale del candidate.
 
 Se una parte dell'esito dipende da verifiche non eseguite direttamente, il verdetto deve essere:
 
@@ -250,7 +266,7 @@ Durante il pilota, Orchestration Practices:
 
 ## Stato del documento
 
-Versione del pilota aggiornata per chiarire l'appartenenza di Orchestration Practices al binario HITF e la separazione tra Orchestrator operativo (GPT/ChatGPT), ownership HITF/Orchestration Practices (Claude), revisione indipendente e approvazione finale umana.
+Versione del pilota aggiornata per chiarire l'appartenenza di Orchestration Practices al binario HITF e la separazione tra Orchestrator operativo (GPT/ChatGPT), ownership HITF/Orchestration Practices (Claude), validazione indipendente incrociata GPT↔Claude e approvazione finale umana.
 
 Il modello deve essere riesaminato dopo i primi casi reali, senza anticipare automazioni o strutture non ancora giustificate dall'esperienza.
 
