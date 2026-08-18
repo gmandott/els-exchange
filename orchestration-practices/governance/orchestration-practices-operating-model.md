@@ -3,7 +3,7 @@
 **Orchestration Practices**
 Real work. Human decisions. Multi-agent coordination.
 
-Versione: 0.3
+Versione: 0.4
 Stato: pilota
 Responsabile operativo del modulo: Claude, nel perimetro HITF
 Validatore indipendente esterno: GPT/ChatGPT
@@ -61,6 +61,36 @@ Durante il pilota:
 
 La validazione indipendente verifica e contesta quando necessario, ma non trasferisce l'ownership del binario al reviewer.
 
+## Decision rights e autonomia
+
+I livelli di autonomia operativa non sostituiscono l'ownership decisionale. La regola trasversale è:
+
+```text
+Gianluca
+→ decide COSA e i confini
+
+GPT / Claude, ciascuno nel proprio binario
+→ decidono COME organizzare il lavoro entro quei confini
+
+Agenti operativi
+→ decidono COME eseguire il task assegnato entro lo scope
+
+Reviewer indipendente
+→ valida/contesta, ma non assume l'ownership
+
+Gianluca
+→ decide se la contestazione è valida e decide di nuovo quando si supera il confine autorizzato
+```
+
+Conseguenze operative:
+
+* l'owner del binario decide autonomamente sequenza, assegnazioni, handoff e metodo entro i confini approvati;
+* gli agenti operativi decidono autonomamente come eseguire il task entro scope, sicurezza e governance;
+* il reviewer indipendente può validare, contestare o chiedere correzioni, ma non assume il governo del lavoro;
+* una contestazione non trasferisce automaticamente l'ownership: l'owner può accoglierla oppure motivare una posizione alternativa;
+* se il disaccordo permane dopo il confronto previsto, decide Gianluca;
+* l'escalation a Gianluca avviene quando si supera un confine autorizzato, emerge un rischio concreto rilevante, serve un'azione irreversibile o permane un conflitto sostanziale; non alla prima incertezza dell'agente.
+
 ## Principi
 
 * Orchestration Practices è un **modulo satellite di HITF**: collegato ai progetti operativi come fonte di pratiche, ma non integrato nei loro workflow bloccanti.
@@ -77,10 +107,10 @@ La validazione indipendente verifica e contesta quando necessario, ma non trasfe
 
 | Ruolo | Responsabilità |
 | --- | --- |
-| **Gianluca — Human Approver** | Decide la selezione finale dei segnali da promuovere, approva o rifiuta le schede pratica, autorizza la pubblicazione e conserva il controllo sul merge. È l'unico approvatore finale durante il pilota. |
-| **Claude — owner operativo HITF / Orchestration Practices** | Governa il flusso Orchestration Practices nel perimetro HITF: valuta i segnali, propone quali casi sviluppare, coordina la trasformazione in pratica trasferibile, verifica coerenza editoriale e completezza del pacchetto. Non può sostituire l'approvazione finale di Gianluca né validare indipendentemente il proprio binario. |
+| **Gianluca — Human Approver** | Decide la selezione finale dei segnali da promuovere, approva o rifiuta le schede pratica, autorizza la pubblicazione, arbitra contestazioni persistenti e conserva il controllo sul merge. È l'unico approvatore finale durante il pilota. |
+| **Claude — owner operativo HITF / Orchestration Practices** | Governa il flusso Orchestration Practices nel perimetro HITF: decide come organizzare il lavoro entro i confini approvati, valuta i segnali, propone quali casi sviluppare, coordina la trasformazione in pratica trasferibile, verifica coerenza editoriale e completezza del pacchetto. Non può sostituire l'approvazione finale di Gianluca né validare indipendentemente il proprio binario. |
 | **GPT / ChatGPT — Orchestrator operativo e validatore esterno HITF** | Governa il lavoro sui progetti operativi e può trasferire a HITF/Orchestration Practices segnali o contesto sanificato. Non coordina il flusso editoriale di Orchestration Practices e non ne è l'owner. Quando il candidate è completo e stabile, svolge la validazione indipendente esterna nel perimetro dichiarato. |
-| **Codex / VS Code + Copilot / altri agenti operativi** | Possono produrre segnali leggeri al termine di attività reali e assistere Claude nella preparazione di schede e materiali. Non selezionano definitivamente, non approvano e non pubblicano. |
+| **Codex / VS Code + Copilot / altri agenti operativi** | Decidono come eseguire il task assegnato entro lo scope e i limiti ricevuti. Possono produrre segnali leggeri al termine di attività reali e assistere Claude nella preparazione di schede e materiali. Non selezionano definitivamente, non approvano e non pubblicano. |
 
 ## Flusso operativo
 
@@ -266,7 +296,7 @@ Durante il pilota, Orchestration Practices:
 
 ## Stato del documento
 
-Versione del pilota aggiornata per chiarire l'appartenenza di Orchestration Practices al binario HITF e la separazione tra Orchestrator operativo (GPT/ChatGPT), ownership HITF/Orchestration Practices (Claude), validazione indipendente incrociata GPT↔Claude e approvazione finale umana.
+Versione del pilota aggiornata per chiarire l'appartenenza di Orchestration Practices al binario HITF e la separazione tra Orchestrator operativo (GPT/ChatGPT), ownership HITF/Orchestration Practices (Claude), validazione indipendente incrociata GPT↔Claude, decision rights e approvazione finale umana.
 
 Il modello deve essere riesaminato dopo i primi casi reali, senza anticipare automazioni o strutture non ancora giustificate dall'esperienza.
 
