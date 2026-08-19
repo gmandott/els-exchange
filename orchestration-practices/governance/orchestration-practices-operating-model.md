@@ -3,7 +3,7 @@
 **Orchestration Practices**
 Real work. Human decisions. Multi-agent coordination.
 
-Versione: 0.4
+Versione: 0.5
 Stato: pilota
 Responsabile operativo del modulo: Claude, nel perimetro HITF
 Validatore indipendente esterno: GPT/ChatGPT
@@ -88,7 +88,7 @@ Conseguenze operative:
 * gli agenti operativi decidono autonomamente come eseguire il task entro scope, sicurezza e governance;
 * il reviewer indipendente può validare, contestare o chiedere correzioni, ma non assume il governo del lavoro;
 * una contestazione non trasferisce automaticamente l'ownership: l'owner può accoglierla oppure motivare una posizione alternativa;
-* se il disaccordo permane dopo il confronto previsto, decide Gianluca;
+* è consentito **un solo ciclo di replica** tra owner e reviewer sulla stessa contestazione sostanziale; se il disaccordo permane dopo tale confronto, decide Gianluca;
 * l'escalation a Gianluca avviene quando si supera un confine autorizzato, emerge un rischio concreto rilevante, serve un'azione irreversibile o permane un conflitto sostanziale; non alla prima incertezza dell'agente.
 
 ## Principi
@@ -239,9 +239,14 @@ La revisione deve:
 * dichiarare eventuali dipendenze da controlli eseguiti da altri;
 * non assumere ownership editoriale del candidate.
 
-Se una parte dell'esito dipende da verifiche non eseguite direttamente, il verdetto deve essere:
+Gli esiti ammessi sono esclusivamente:
 
-`VALIDATO CON PERIMETRO`
+* `VALIDATO`;
+* `VALIDATO CON PERIMETRO`;
+* `VALIDATO CON RISERVE`;
+* `NON VALIDATO`.
+
+Se una parte dell'esito dipende da verifiche non eseguite direttamente, il verdetto deve essere `VALIDATO CON PERIMETRO` e deve dichiarare esplicitamente il limite di perimetro.
 
 Ogni modifica sostanziale successiva alla revisione riapre il pacchetto e richiede una nuova verifica.
 
@@ -296,7 +301,7 @@ Durante il pilota, Orchestration Practices:
 
 ## Stato del documento
 
-Versione del pilota aggiornata per chiarire l'appartenenza di Orchestration Practices al binario HITF e la separazione tra Orchestrator operativo (GPT/ChatGPT), ownership HITF/Orchestration Practices (Claude), validazione indipendente incrociata GPT↔Claude, decision rights e approvazione finale umana.
+Versione del pilota aggiornata per chiarire l'appartenenza di Orchestration Practices al binario HITF e la separazione tra Orchestrator operativo (GPT/ChatGPT), ownership HITF/Orchestration Practices (Claude), validazione indipendente incrociata GPT↔Claude, decision rights, vocabolario condiviso degli esiti e approvazione finale umana.
 
 Il modello deve essere riesaminato dopo i primi casi reali, senza anticipare automazioni o strutture non ancora giustificate dall'esperienza.
 
